@@ -1,0 +1,18 @@
+module sop_corba_notificacion{
+    interface INotificationController{
+		struct NotificationDTO{
+			long id;
+			string nombre;	
+			string apellido;
+			long edad;
+			float color;
+			string fecha;
+		};
+
+		typedef sequence<NotificationDTO> LstNotification;
+        	LstNotification findAllNotifications();
+		boolean registrarNotification( in NotificationDTO save);
+		LstNotification findNotificationByStudentId(in long id);
+			
+    };    	 
+};
