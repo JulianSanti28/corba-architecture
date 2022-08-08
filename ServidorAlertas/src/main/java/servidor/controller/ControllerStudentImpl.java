@@ -32,6 +32,7 @@ public class ControllerStudentImpl extends IStudentControllerPOA {
 
     @Override
     public InformeDTO generarInforme() {
-        return null;
+        return this.studentRepository.generarInforme();
     }
+
 }

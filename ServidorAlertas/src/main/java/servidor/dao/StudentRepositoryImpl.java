@@ -7,11 +7,8 @@ import servidor.service.NotificacionBienestarServiceImpl;
 import sop_corba.IStudentControllerPackage.InformeDTO;
 import sop_corba.IStudentControllerPackage.StudentDTO;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+
 import servidor.utils.UtilidadesRegistroC;
 import sop_corba_notificacion.INotificationController;
 import sop_corba_notificacion.INotificationControllerPackage.NotificationDTO;
@@ -73,7 +70,7 @@ public class StudentRepositoryImpl implements IStudentRepository{
             save.color = 1;//Rojo
         }else if(save.nota>=3.0 && save.nota<3.5){
             save.color = 2;//Naranja
-        }else if (save.nota>=3.5 && save.nota<4.5){
+        }else if (save.nota>=3.5 && save.nota<=5.0){
             save.color = 3;//Verde
         }
     }
@@ -87,13 +84,59 @@ public class StudentRepositoryImpl implements IStudentRepository{
     }
     @Override
     public InformeDTO generarInforme() {
-        return null;
+        InformeDTO informe = new InformeDTO();
+        //Alertas rojas
+        int reportadoCorte1 = 0;
+        int reportadoCorte2 = 0;
+        int reportadoCorte3 = 0;
+        int alertaVerdeCorte1 = 0;
+        int alertaVerdeCorte2 = 0;
+        int alertaVerdeCorte3 = 0;
+        Set<Integer> estudiantesAlertaRoja = new HashSet<>();
+        for(Map.Entry<Integer, ArrayList<StudentDTO>> e: this.registroNotas.entrySet()){
+            for(StudentDTO s: e.getValue()){
+                if(e.getKey() == 1){
+                    if (s.color == 1){
+                        estudiantesAlertaRoja.add(s.id);
+                        reportadoCorte1+=1;
+                    }
+                    if (s.color == 3){
+                        alertaVerdeCorte1 += 1;
+                    }
+                }
+                if(e.getKey() == 2){
+                    if (s.color == 1){
+                        estudiantesAlertaRoja.add(s.id);
+                        reportadoCorte2+=1;
+                    }
+                    if (s.color == 3){
+                        alertaVerdeCorte2 += 1;
+                    }
+                }
+                if(e.getKey() == 3){
+                    if (s.color == 1){
+                        estudiantesAlertaRoja.add(s.id);
+                        reportadoCorte3+=1;
+                    }
+                    if (s.color == 3){
+                        alertaVerdeCorte3 += 1;
+                    }
+                }
+            }
+        }
+        int[] alertasVerdeCorte = {alertaVerdeCorte1, alertaVerdeCorte2, alertaVerdeCorte3};
+        int[] reportadosPorCorte = {reportadoCorte1, reportadoCorte2, reportadoCorte3};
+        informe.alertaVerdeCorte = alertasVerdeCorte;
+        informe.estudiantesBienestar = reportadosPorCorte;
+        informe.alertasRojas = estudiantesAlertaRoja.size();
+
+        return informe;
     }
 
     private INotificationController obtenerObjRemotoNotificacion() {
         String[] vectorDatosLocalizarNS = new String[4];
         vectorDatosLocalizarNS[0] = "-ORBInitialHost";
-        //System.out.println("Ingrese la dirección IP donde escucha el n_s");
+        //System.out.println("Ingrese la direcciï¿½n IP donde escucha el n_s");
         vectorDatosLocalizarNS[1] = "localhost";//UtilidadesConsola.leerCadena();
         vectorDatosLocalizarNS[2] = "-ORBInitialPort";
         //System.out.println("Ingrese el puerto donde escucha el n_s");
