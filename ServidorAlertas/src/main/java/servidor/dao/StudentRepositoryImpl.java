@@ -29,9 +29,9 @@ public class StudentRepositoryImpl implements IStudentRepository{
     }
 
     public void init(){
-        this.estudiantes.add(new StudentDTO(1, "Paula", "Pe√±a", 20, 0,0,0));
-        this.estudiantes.add(new StudentDTO(2, "Juli√°n", "Martinez", 19, 0,0,0));
-        this.estudiantes.add(new StudentDTO(3, "Mar√≠a", "Gonzales", 22, 0,0,0));
+        this.estudiantes.add(new StudentDTO(1, "Paula", "PeÒa", 20, 0,0,0));
+        this.estudiantes.add(new StudentDTO(2, "Julian", "Martinez", 19, 0,0,0));
+        this.estudiantes.add(new StudentDTO(3, "Mari≠a", "Gonzales", 22, 0,0,0));
     }
     @Override
     public List<StudentDTO> findAllStudent() {

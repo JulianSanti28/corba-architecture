@@ -9,8 +9,13 @@ import java.util.Scanner;
 
 public class Menu {
     private IStudentController objRemoto;
+    private ArrayList<Integer> listaTrue ;
     public Menu(IStudentController objRemoto){
         this.objRemoto = objRemoto;
+        listaTrue = new ArrayList();
+        listaTrue.add(1);
+        listaTrue.add(1);
+        listaTrue.add(1);
     }
 
     public void mostrarMenu(){
@@ -21,16 +26,20 @@ public class Menu {
             System.out.println("1. Registrar Notas");
             System.out.println("2. Generar informe");
             System.out.println("3. Salir");
-            System.out.println("Digite una opción: ");
+            System.out.println("Digite una opcion: ");
             opcMain = entrada.nextInt();
             switch (opcMain){
                 case 1:
                     menuRegistrarNotas(entrada);
                     break;
                 case 2:
+                    if(listaTrue.contains(1)){
+                        System.out.println("Debe ingresar notas en todos los cortes"); break; 
+                    }
+                        
                     InformeDTO informe = this.objRemoto.generarInforme();
                     System.out.println("\t  Informe generado... ");
-                    System.out.println("1. Números de alertas rojas por corte: "+ informe.alertasRojas);
+                    System.out.println("1. Numeros de alertas rojas : "+ informe.alertasRojas);
                     System.out.println("2. Estudiante atendidos por bienestar: ");
                     System.out.println("\t 2.1. Corte 1: " + informe.estudiantesBienestar[0]);
                     System.out.println("\t 2.2. Corte 2: " + informe.estudiantesBienestar[1]);
@@ -53,7 +62,7 @@ public class Menu {
             System.out.println("2. Segundo corte");
             System.out.println("3. Tercer corte");
             System.out.println("4. Salir");
-            System.out.println("Digite una opción:");
+            System.out.println("Digite una opcion:");
             opcNota = entrada.nextInt();
             if(opcNota >= 1 && opcNota<=3){
                 int opcEstudiante = 0;
@@ -68,7 +77,9 @@ public class Menu {
                 estudiante.corte = opcNota;
                 System.out.println("Digite el promedio del estudiante corte: " + opcNota);
                 estudiante.nota = entrada.nextFloat();
-                if(this.objRemoto.registrarNota(estudiante)) System.out.println("¡Registro exitoso!");
+                listaTrue.remove(opcNota-1);
+                listaTrue.add(opcNota-1,0);
+                if(this.objRemoto.registrarNota(estudiante)) System.out.println("�Registro exitoso!");
                 else System.out.println("Error el guardar el registro");
             }
 

@@ -22,6 +22,7 @@ public class ControllerStudentImpl extends IStudentControllerPOA {
     }
     @Override
     public boolean registrarNota(StudentDTO save) {
+       
         return this.studentRepository.registrarNota(save);
     }
 
