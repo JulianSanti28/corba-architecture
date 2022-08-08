@@ -16,12 +16,13 @@ public class NotificacionBienestarServiceImpl implements Runnable, INotificarBie
   
     @Override
     public void run() {
-        System.out.println("Enviando notificación...");
+        System.out.println("Enviando notificacion...");
         registrarNotificacion(this.notificacion);
     }
     
     @Override
     public boolean registrarNotificacion(NotificationDTO save) {
+        System.out.println("Guardar notificacion "+save.id);
         if(this.objRemoto.registrarNotification(save)) return true;
         System.out.println("No se pudo enviar notificacion ");
         return false;
