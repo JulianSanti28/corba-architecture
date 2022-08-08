@@ -1,13 +1,20 @@
-package servidor.dao;
+ package servidor.dao;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import servidor.service.INotificarBienestarService;
 import servidor.service.NotificacionBienestarServiceImpl;
 import sop_corba.IStudentControllerPackage.InformeDTO;
 import sop_corba.IStudentControllerPackage.StudentDTO;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import servidor.utils.UtilidadesRegistroC;
+import sop_corba_notificacion.INotificationController;
+import sop_corba_notificacion.INotificationControllerPackage.NotificationDTO;
 
 
 public class StudentRepositoryImpl implements IStudentRepository{
@@ -15,9 +22,12 @@ public class StudentRepositoryImpl implements IStudentRepository{
     private HashMap<Integer, ArrayList<StudentDTO>> registroNotas;
     private ArrayList<StudentDTO> estudiantes;
 
+    private INotificationController objRemotoNotificacion;
+    
     public StudentRepositoryImpl(){
         this.registroNotas = new HashMap<>();
         this.estudiantes = new ArrayList<>();
+        this.objRemotoNotificacion= obtenerObjRemotoNotificacion();
         this.init();
     }
 
@@ -40,13 +50,20 @@ public class StudentRepositoryImpl implements IStudentRepository{
         }
         if(this.registroNotas.get(save.corte).add(save)){
             if (requiereNotificar(save)){
-                INotificarBienestarService notificarBienestarService = new NotificacionBienestarServiceImpl();
+                NotificationDTO noti = new NotificationDTO(save.id,save.nombre,save.apellido,save.edad,save.color,getFecha());
+                INotificarBienestarService notificarBienestarService = new NotificacionBienestarServiceImpl(this.objRemotoNotificacion,noti);
                 Thread notificarBienestar = new Thread((Runnable) notificarBienestarService);
                 notificarBienestar.run();
             }
             return true;
         }
         return false;
+    }
+    private String getFecha(){
+        Date date = Calendar.getInstance().getTime();
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String today = formatter.format(date);
+        return today;
     }
     public boolean requiereNotificar(StudentDTO save){
         return  save.color == 1 || save.color == 2;
@@ -71,5 +88,17 @@ public class StudentRepositoryImpl implements IStudentRepository{
     @Override
     public InformeDTO generarInforme() {
         return null;
+    }
+
+    private INotificationController obtenerObjRemotoNotificacion() {
+        String[] vectorDatosLocalizarNS = new String[4];
+        vectorDatosLocalizarNS[0] = "-ORBInitialHost";
+        //System.out.println("Ingrese la dirección IP donde escucha el n_s");
+        vectorDatosLocalizarNS[1] = "localhost";//UtilidadesConsola.leerCadena();
+        vectorDatosLocalizarNS[2] = "-ORBInitialPort";
+        //System.out.println("Ingrese el puerto donde escucha el n_s");
+        vectorDatosLocalizarNS[3] ="2020";// UtilidadesConsola.leerCadena();
+        System.out.println("Conectado al servidor de notificaciones");
+        return UtilidadesRegistroC.obtenerObjRemoto(vectorDatosLocalizarNS,"idObjetoRemotoNotificacion");
     }
 }
